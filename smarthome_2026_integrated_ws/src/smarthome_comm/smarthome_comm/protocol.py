@@ -17,7 +17,7 @@ MAX_PAYLOAD = 512
 
 
 class CmdId(IntEnum):
-    # 上位机 -> 下位机
+    # Upper computer -> lower computer
     HEARTBEAT_TX = 0x0001
     CHASSIS_VEL = 0x0101
     VISION_TARGET = 0x0201
@@ -26,7 +26,7 @@ class CmdId(IntEnum):
     ESTOP = 0x0401
     NAV_EVENT = 0x0501
 
-    # 下位机 -> 上位机
+    # Lower computer -> upper computer
     HEARTBEAT_RX = 0x8001
     LOWER_STATE = 0x8002
     ARM_STATUS = 0x8003
@@ -99,18 +99,10 @@ class FrameParser:
 
 
 def pack_chassis_vel(vx: float, vy: float, wz: float) -> bytes:
-    """vx, vy in m/s, wz in rad/s."""
     return struct.pack("<fff", float(vx), float(vy), float(wz))
 
 
 def pack_object_target(class_id: int, source: int, x: float, y: float, z: float, score: float) -> bytes:
-    """Vision target payload.
-
-    class_id: 0 meat / 1 vegetable / 2 fruit / 3 other or user-defined.
-    source: 0 object / 1 QR / 2 manual.
-    x,y,z: target position in the declared frame, meters.
-    score: confidence in [0,1].
-    """
     return struct.pack("<BBffff", int(class_id) & 0xFF, int(source) & 0xFF, float(x), float(y), float(z), float(score))
 
 
@@ -132,16 +124,11 @@ def pack_arm_command(command: int, class_id: int, position: Tuple[float, float, 
     )
 
 
-def pack_nav_event(event_code: int, zone_id: int) -> bytes:
-    return struct.pack("<BB", int(event_code) & 0xFF, int(zone_id) & 0xFF)
+def pack_nav_event(zone_id: int) -> bytes:
+    return struct.pack("<B", int(zone_id) & 0xFF)
 
 
 def unpack_lower_state(payload: bytes) -> Optional[dict]:
-    """Parse LOWER_STATE payload.
-
-    Layout: uint8 mode, uint8 estop, float battery_v, float battery_i,
-            float chassis_temp, uint16 error_code, uint32 uptime_ms.
-    """
     fmt = "<BBfffHI"
     size = struct.calcsize(fmt)
     if len(payload) < size:

@@ -5,10 +5,16 @@ smarthome_comm_node:
     fake_mode: true
     read_hz: 200.0
     heartbeat_hz: 2.0
+    serial_reconnect_interval: 1.0
+    warn_disconnected_hz: 0.5
     cmd_vel_topic: "/cmd_vel"
     object_target_topic: "/smarthome/object_target"
+    task_state_topic: "/smarthome/task/state"
+    nav_reached_zone_topic: "/smarthome/navigation/reached_zone"
     lower_state_topic: "/smarthome/lower_state"
     raw_rx_topic: "/smarthome/comm/raw_rx"
     raw_tx_topic: "/smarthome/comm/raw_tx"
     enable_cmd_vel: true
     enable_object_target: true
+    enable_nav_event: true
+    zone_sequence: ["A", "B", "C", "D", "E", "F"]

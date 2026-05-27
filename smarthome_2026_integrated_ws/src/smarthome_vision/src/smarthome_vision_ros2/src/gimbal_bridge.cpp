@@ -46,6 +46,11 @@ GimbalBridge::~GimbalBridge()
 
 bool GimbalBridge::openPort()
 {
+  if (device_.empty()) {
+    std::cerr << "[GimbalBridge] serial disabled because serial_device is empty" << std::endl;
+    return false;
+  }
+
   fd_ = open(device_.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
   if (fd_ < 0) {
     std::cerr << "[GimbalBridge] failed to open " << device_ << std::endl;
